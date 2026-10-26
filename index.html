@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#082e33" />
+    <meta name="color-scheme" content="dark" />
+    <title>Pelican / Vélo — 鹈鹕与单车</title>
+    <meta
+      name="description"
+      content="一只鹈鹕，一辆单车，一整片正在退潮的海。一个完全由代码生成的实时 3D 海边漫游。"
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Pelican / Vélo — 鹈鹕与单车" />
+    <meta
+      property="og:description"
+      content="A real-time 3D seaside daydream. 一只鹈鹕，一辆单车，一整片正在退潮的海。"
+    />
+    <meta property="og:image" content="https://jacoryou.github.io/pelican-velo/og.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:url" content="https://jacoryou.github.io/pelican-velo/" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://jacoryou.github.io/pelican-velo/og.jpg" />
+    <link rel="canonical" href="https://jacoryou.github.io/pelican-velo/" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+  </head>
+  <body>
+    <svg class="svg-sprite" aria-hidden="true">
+      <defs>
+        <symbol id="i-arrow" viewBox="0 0 24 24">
+          <path d="M5 12h13M13 6l6 6-6 6" />
+        </symbol>
+        <symbol id="i-sound" viewBox="0 0 24 24">
+          <path d="M4 9v6h4l5 4V5L8 9H4Z" />
+          <path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a9 9 0 0 1 0 12" />
+        </symbol>
+        <symbol id="i-muted" viewBox="0 0 24 24">
+          <path d="M4 9v6h4l5 4V5L8 9H4Z" />
+          <path d="m16 9 5 5m0-5-5 5" />
+        </symbol>
+        <symbol id="i-sun" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="4" />
+          <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
+        </symbol>
+        <symbol id="i-moon" viewBox="0 0 24 24">
+          <path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5 8.5 8.5 0 1 0 20.5 14.2Z" />
+        </symbol>
+        <symbol id="i-info" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="9" />
+          <path d="M12 11v5M12 7.5v.2" />
+        </symbol>
+        <symbol id="i-bell" viewBox="0 0 24 24">
+          <path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9ZM9.5 21h5" />
+        </symbol>
+        <symbol id="i-camera" viewBox="0 0 24 24">
+          <path d="M4 8h3l1.5-2h7L17 8h3v11H4V8Z" />
+          <circle cx="12" cy="13.5" r="3.5" />
+        </symbol>
+        <symbol id="i-photo" viewBox="0 0 24 24">
+          <path d="M4 6h16v12H4zM8 6l1.5-2h5L16 6" />
+          <circle cx="12" cy="12" r="3.5" />
+        </symbol>
+        <symbol id="i-pause" viewBox="0 0 24 24">
+          <path d="M8 5v14M16 5v14" />
+        </symbol>
+        <symbol id="i-play" viewBox="0 0 24 24">
+          <path d="m8 5 11 7-11 7V5Z" />
+        </symbol>
+        <symbol id="i-close" viewBox="0 0 24 24">
+          <path d="m6 6 12 12M18 6 6 18" />
+        </symbol>
+        <symbol id="i-replay" viewBox="0 0 24 24">
+          <path d="M4 10a8 8 0 1 1 2 8M4 4v6h6" />
+        </symbol>
+        <symbol id="i-drag" viewBox="0 0 24 24">
+          <path d="M12 3v18M3 12h18M9 6l3-3 3 3M9 18l3 3 3-3M6 9l-3 3 3 3M18 9l3 3-3 3" />
+        </symbol>
+      </defs>
+    </svg>
+
+    <div id="app" class="app is-loading">
+      <canvas id="scene" class="scene" aria-label="一只鹈鹕骑着单车，沿着海边环形栈道前行"></canvas>
+      <div class="scene-wash" aria-hidden="true"></div>
+      <div class="film-grain" aria-hidden="true"></div>
+      <div class="edge-shade" aria-hidden="true"></div>
+
+      <!-- ───────────────────────── loader ───────────────────────── -->
+      <div id="loader" class="loader" role="status" aria-live="polite">
+        <div class="loader__inner">
+          <div class="loader__mark" aria-hidden="true">
+            <svg viewBox="0 0 220 120" fill="none">
+              <circle class="wheel wheel--a" cx="48" cy="88" r="22" />
+              <circle class="wheel wheel--b" cx="164" cy="88" r="22" />
+              <path
+                class="draw"
+                d="M48 88 86 48l32 40H70l22-40h54l18 40h-40l18-40 9-22c5-11 15-16 26-13 9 2 13 10 15 19l7 26c-14 1-28 0-38-8"
+              />
+              <path class="draw draw--late" d="M148 24c4-6 11-9 17-5 4 3 3 9-2 11l-19 8" />
+              <circle class="dot" cx="175" cy="15" r="2.2" />
+            </svg>
+          </div>
+          <p class="loader__eyebrow">PELICAN / VÉLO</p>
+          <p id="loader-label" class="loader__label">正在搭起海边的舞台</p>
+          <div class="loader__rail"><span id="loader-fill" class="loader__fill"></span></div>
+          <div class="loader__meta">
+            <span>35°14′N · 139°06′E</span>
+            <span id="loader-percent">00</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ───────────────────────── ambient chrome ───────────────────────── -->
+      <header id="topbar" class="topbar" aria-label="页面信息">
+        <a class="brand" href="#" data-action="home" aria-label="Pelican Vélo 首页">
+          <span class="brand__mark" aria-hidden="true">
+            <svg viewBox="0 0 40 40" fill="none">
+              <path d="M8 27c4-1 5-4 6-8 2-8 9-12 15-9 4 2 5 5 3 8-1 2-4 3-8 3h-6" />
+              <path d="M14 30c1-4 4-7 9-7M24 23l8 3-8 4" />
+              <circle cx="12" cy="31" r="5" />
+              <circle cx="31" cy="31" r="5" />
+            </svg>
+          </span>
+          <span class="brand__type">Pelican<span>/</span><em>Vélo</em></span>
+        </a>
+
+        <div class="chapter" aria-hidden="true">
+          <span class="chapter__no">CH. 01</span>
+          <span class="chapter__name">THE CAUSEWAY</span>
+        </div>
+
+        <div class="top-actions">
+          <button class="icon-btn" type="button" data-action="sound" aria-label="开启声音" aria-pressed="false">
+            <svg class="ico ico--sound"><use href="#i-sound" /></svg>
+            <svg class="ico ico--muted"><use href="#i-muted" /></svg>
+          </button>
+          <button class="text-btn theme-btn" type="button" data-action="theme" aria-label="切换昼夜">
+            <svg class="ico ico--sun"><use href="#i-sun" /></svg>
+            <svg class="ico ico--moon"><use href="#i-moon" /></svg>
+            <span class="theme-btn__label">GOLDEN HOUR</span>
+          </button>
+          <button class="text-btn" type="button" data-action="notes" aria-label="打开手记">
+            <svg class="ico"><use href="#i-info" /></svg>
+            <span>FIELD NOTES</span>
+            <span class="text-btn__index">01</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- ───────────────────────── hero ───────────────────────── -->
+      <section id="hero" class="hero" aria-labelledby="hero-title">
+        <div class="hero__rule" aria-hidden="true"></div>
+        <p class="hero__kicker reveal">
+          <span>AN INTERACTIVE SEASIDE DAYDREAM</span>
+          <span class="hero__kicker-sep">/</span>
+          <span>NO. 001</span>
+        </p>
+
+        <div class="hero__title-wrap">
+          <h1 id="hero-title" class="hero__title">
+            <span class="hero__line hero__line--one reveal">PELICAN</span>
+            <span class="hero__line hero__line--two reveal">
+              <span class="hero__slash">/</span>
+              <em>Vélo</em>
+            </span>
+          </h1>
+          <p class="hero__aside reveal">
+            <span class="hero__aside-cn">一只鹈鹕</span>
+            <span class="hero__aside-cn">一辆单车</span>
+            <span class="hero__aside-cn">一整片正在退潮的海</span>
+          </p>
+        </div>
+
+        <div class="hero__bottom">
+          <button id="enter" class="enter" type="button" aria-label="开始骑行">
+            <span class="enter__ring" aria-hidden="true"></span>
+            <span class="enter__text">开始<br />骑行</span>
+            <span class="enter__arrow" aria-hidden="true"><svg><use href="#i-arrow" /></svg></span>
+          </button>
+
+          <p class="hero__note reveal">
+            它没有目的地。<br />
+            这条环形海堤，就是它全部的远方。
+          </p>
+
+          <div class="hero__hints reveal">
+            <span><svg><use href="#i-drag" /></svg>拖动环视</span>
+            <span>滚轮缩放</span>
+            <span><kbd>SPACE</kbd> 刹车</span>
+          </div>
+        </div>
+
+        <div class="hero__side" aria-hidden="true">
+          <span>PELICAN POINT · CAUSEWAY LOOP</span>
+          <span class="hero__side-line"></span>
+          <span>GOLDEN HOUR / 18:42</span>
+        </div>
+
+        <div class="hero__coords" aria-hidden="true">
+          <span>35°14′N</span>
+          <span>139°06′E</span>
+        </div>
+      </section>
+
+      <!-- ───────────────────────── HUD ───────────────────────── -->
+      <section id="hud" class="hud" aria-label="骑行控制台">
+        <div class="telemetry">
+          <div class="telemetry__label"><span>VELOCITY</span><span class="telemetry__pulse"></span></div>
+          <div class="telemetry__speed">
+            <span id="speed-value">00.0</span>
+            <span class="telemetry__unit">KM/H</span>
+          </div>
+          <div class="telemetry__sub">
+            <span>DIST <b id="distance-value">0.00</b> KM</span>
+            <span class="dot-sep"></span>
+            <span>LAP <b id="lap-value">01</b></span>
+          </div>
+        </div>
+
+        <div class="dock" role="toolbar" aria-label="骑行工具">
+          <button class="dock__btn" type="button" data-action="decelerate" aria-label="减速">
+            <span class="minus"></span>
+          </button>
+          <div class="throttle">
+            <div class="throttle__head"><span>CADENCE</span><b id="cadence-value">42</b></div>
+            <input id="speed-range" class="range" type="range" min="0" max="100" value="42" aria-label="骑行速度" />
+            <div class="throttle__ticks" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+          </div>
+          <button class="dock__btn" type="button" data-action="accelerate" aria-label="加速">
+            <span class="plus"></span>
+          </button>
+          <span class="dock__divider" aria-hidden="true"></span>
+          <button class="dock__btn dock__btn--wide" type="button" data-action="camera" aria-label="切换镜头">
+            <span class="dock__k">CAM</span><span id="camera-label" class="dock__v">FOLLOW</span>
+          </button>
+          <button class="dock__btn" type="button" data-action="bell" aria-label="按铃">
+            <svg><use href="#i-bell" /></svg>
+          </button>
+          <button class="dock__btn" type="button" data-action="photo" aria-label="拍照模式">
+            <svg><use href="#i-camera" /></svg>
+          </button>
+          <button class="dock__btn" type="button" data-action="pause" aria-label="暂停">
+            <svg class="ico ico--pause"><use href="#i-pause" /></svg>
+            <svg class="ico ico--play"><use href="#i-play" /></svg>
+          </button>
+        </div>
+
+        <div class="lapcard">
+          <div class="lapcard__eyebrow"><span>LIVE RIDE</span><span class="live-dot"></span></div>
+          <div class="lapcard__row"><span>THIS LAP</span><b id="lap-time">00:00</b></div>
+          <div class="lapcard__row"><span>BEST</span><b id="best-time">—:—</b></div>
+          <div class="lapcard__track"><span id="lap-progress"></span></div>
+          <div class="lapcard__foot"><span id="weather-label">CLEAR · 21°C</span><span id="quality-label">WEBGL2 · AUTO</span></div>
+        </div>
+      </section>
+
+      <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+      <!-- ───────────────────────── field notes ───────────────────────── -->
+      <div id="notes-backdrop" class="notes-backdrop" aria-hidden="true"></div>
+      <aside id="notes" class="notes" aria-labelledby="notes-title" aria-hidden="true" inert>
+        <div class="notes__head">
+          <span class="notes__eyebrow">FIELD NOTES <b>01</b> / 03</span>
+          <button class="icon-btn notes__close" type="button" data-action="notes-close" aria-label="关闭手记">
+            <svg><use href="#i-close" /></svg>
+          </button>
+        </div>
+
+        <h2 id="notes-title" class="notes__title">关于一只<br /><em>不赶时间</em>的鹈鹕</h2>
+        <p class="notes__lede">
+          它没有名字。每天黄昏，它从灯塔脚下出发，沿着环形海堤骑一圈。车篮里放着一条始终没被吃掉的鱼。
+        </p>
+        <p class="notes__body">
+          这是一个完全由代码生成的实时世界：没有下载任何 3D 模型，没有使用一张贴图。海面、天空、鹈鹕、单车、声音，都在你打开这一页时被重新计算、重新长出来。
+        </p>
+
+        <dl class="notes__stats">
+          <div><dt>GEOMETRY</dt><dd>100% procedural</dd></div>
+          <div><dt>OCEAN</dt><dd>GLSL / 6 wave trains</dd></div>
+          <div><dt>SOUND</dt><dd>Web Audio synthesis</dd></div>
+          <div><dt>DRAW CALLS</dt><dd id="drawcalls-value">—</dd></div>
+        </dl>
+
+        <div class="notes__controls">
+          <span class="notes__controls-title">KEYS / 操作</span>
+          <div><kbd>W</kbd><kbd>S</kbd><span>加速 / 减速</span></div>
+          <div><kbd>SPACE</kbd><span>刹车</span></div>
+          <div><kbd>C</kbd><span>切换镜头</span></div>
+          <div><kbd>B</kbd><span>按铃</span></div>
+          <div><kbd>N</kbd><span>昼夜</span></div>
+          <div><kbd>P</kbd><span>拍照</span></div>
+          <div><kbd>ESC</kbd><span>关闭面板</span></div>
+        </div>
+
+        <div class="notes__foot">
+          <p>Made with three.js, custom shaders, a little bit of math, and one very patient bird.</p>
+          <div class="notes__actions">
+            <button class="text-link" type="button" data-action="replay"><svg><use href="#i-replay" /></svg> 重播开场</button>
+            <button class="text-link" type="button" data-action="reset-ride">重新出发</button>
+          </div>
+        </div>
+      </aside>
+
+      <!-- ───────────────────────── photo mode ───────────────────────── -->
+      <div id="photo-ui" class="photo-ui" aria-hidden="true" inert>
+        <div class="photo-ui__frame" aria-hidden="true">
+          <i></i><i></i><i></i><i></i>
+        </div>
+        <div class="photo-ui__top">
+          <span>PELICAN / VÉLO</span>
+          <span id="photo-date">35°14′N · 139°06′E</span>
+        </div>
+        <div class="photo-ui__bottom">
+          <p>点击快门，带走这一刻。</p>
+          <div class="photo-ui__actions">
+            <button class="shutter" type="button" data-action="capture" aria-label="拍摄照片">
+              <span></span>
+            </button>
+            <button class="text-btn" type="button" data-action="photo-close">退出拍照</button>
+          </div>
+        </div>
+        <div id="flash" class="flash" aria-hidden="true"></div>
+      </div>
+
+      <div class="cursor" id="cursor" aria-hidden="true"><span></span></div>
+      <div class="rotate-hint" id="rotate-hint" aria-hidden="true">横过来，看得更远</div>
+    </div>
+
+    <noscript>
+      <div class="noscript">这个海边世界需要 JavaScript 与 WebGL 才能开始。</div>
+    </noscript>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

@@ -689,6 +689,8 @@ function enterExperience() {
   state.speed = Math.max(state.speed, 2.8);
   state.targetSpeed = 3.5;
   app.classList.add("is-entered");
+  app.scrollTop = 0;
+  app.scrollLeft = 0;
   toggleSound(true);
   setTimeout(() => toast("沿着海堤走。不必赶时间。", 3400), 900);
 }
@@ -984,6 +986,8 @@ function bindUi() {
 
 function step(dt) {
   dt = Math.min(dt, 0.05);
+  if (app.scrollTop !== 0) app.scrollTop = 0;
+  if (app.scrollLeft !== 0) app.scrollLeft = 0;
   renderer.info.reset();
   state.sceneTime += dt;
   state.night = damp(state.night, state.nightTarget, 1.9, dt);

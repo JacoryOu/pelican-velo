@@ -85,6 +85,8 @@ a:focus-visible {
   height: 100svh;
   min-height: 520px;
   overflow: hidden;
+  overflow: clip;
+  overscroll-behavior: none;
   isolation: isolate;
   background: var(--deep);
 }

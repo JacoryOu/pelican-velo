@@ -63,7 +63,7 @@ The static output is written to `dist/` and uses relative asset paths, so it can
 
 ## Deploy
 
-The live build is published from the `gh-pages` branch of this repository to GitHub Pages (Fastly CDN). A jsDelivr mirror may also be available from the tagged build.
+The live build is published from the `gh-pages` branch of this repository to GitHub Pages (Fastly CDN).
 
 ## Credits
 
